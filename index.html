@@ -1,0 +1,2401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Sporting Clays for Vets — Sarasota, FL</title>
+<meta name="description" content="Annual Sporting Clays for Vets Fun Shoot and the CMS Phil Fessenden Memorial Veterans Fund — supporting disabled veterans and first responders in Sarasota County, FL."/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=Barlow+Condensed:wght@300;400;500;600;700&family=Cinzel:wght@400;600;700;900&family=EB+Garamond:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet"/>
+
+<style>
+/* ═══════════════════════════════════════════════
+   ROOT & RESET
+═══════════════════════════════════════════════ */
+:root {
+  /* Clays for Vets palette */
+  --cfv-dark: #080e14;
+  --cfv-navy: #0b1622;
+  --cfv-red: #b22234;
+  --cfv-red2: #d4293e;
+  --cfv-gold: #c9a84c;
+  --cfv-gold2: #e8c84a;
+  --cfv-muted: rgba(255,255,255,.45);
+
+  /* Phil Fessenden palette */
+  --pf-bg: #f5f0e8;
+  --pf-cream: #faf7f2;
+  --pf-navy: #0d1f3c;
+  --pf-navy2: #1a3460;
+  --pf-gold: #9a7c3a;
+  --pf-gold2: #c4a35a;
+  --pf-warm: #6b4f2a;
+  --pf-muted: rgba(13,31,60,.45);
+
+  --ease: cubic-bezier(.4,0,.2,1);
+  --ease-out: cubic-bezier(0,0,.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { font-family: 'Barlow Condensed', sans-serif; background: #080e14; overflow-x: hidden; font-size: 18px; }
+img { display: block; max-width: 100%; }
+a { color: inherit; text-decoration: none; }
+button { cursor: pointer; border: none; background: none; font-family: inherit; }
+
+/* ═══════════════════════════════════════════════
+   PAGE SYSTEM
+═══════════════════════════════════════════════ */
+.view { display: none !important; min-height: 100vh; }
+.view.active { display: block !important; animation: viewIn .55s var(--ease) both; }
+#view-chooser.active { display: flex !important; }
+@keyframes viewIn {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ═══════════════════════════════════════════════
+   ██ CHOOSER SCREEN
+═══════════════════════════════════════════════ */
+#view-chooser {
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Shared panel base */
+.chooser-panel {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 3rem;
+  cursor: pointer;
+  transition: flex .7s cubic-bezier(.77,0,.18,1);
+}
+
+/* On hover — expand hovered, shrink other */
+#view-chooser:has(.panel-cfv:hover) .panel-cfv { flex: 1.62; }
+#view-chooser:has(.panel-cfv:hover) .panel-pf  { flex: 0.62; }
+#view-chooser:has(.panel-pf:hover)  .panel-pf  { flex: 1.62; }
+#view-chooser:has(.panel-pf:hover)  .panel-cfv { flex: 0.62; }
+
+/* ── Panel CFV (left, dark tactical) ── */
+.panel-cfv {
+  background: var(--cfv-dark);
+}
+.panel-cfv::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(178,34,52,.055) 0, rgba(178,34,52,.055) 1px, transparent 1px, transparent 48px),
+    repeating-linear-gradient(90deg, rgba(178,34,52,.055) 0, rgba(178,34,52,.055) 1px, transparent 1px, transparent 48px);
+  pointer-events: none;
+}
+.panel-cfv::after {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 60% at 50% 55%, rgba(178,34,52,.18), transparent 70%);
+  pointer-events: none;
+  transition: opacity .5s;
+  opacity: 0;
+}
+.panel-cfv:hover::after { opacity: 1; }
+
+/* ── Panel PF (right, warm memorial) ── */
+.panel-pf {
+  background: var(--pf-bg);
+}
+.panel-pf::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(196,163,90,.25), transparent 55%),
+    radial-gradient(ellipse 60% 60% at 50% 100%, rgba(154,124,58,.15), transparent 55%);
+  pointer-events: none;
+}
+
+/* Vertical divider */
+.chooser-divider {
+  position: absolute;
+  top: 0; bottom: 0;
+  left: 50%;
+  width: 4px;
+  background: linear-gradient(180deg, transparent, var(--cfv-red) 20%, var(--cfv-gold) 50%, var(--pf-gold2) 80%, transparent);
+  z-index: 10;
+  pointer-events: none;
+  transition: left .7s cubic-bezier(.77,0,.18,1);
+}
+#view-chooser:has(.panel-cfv:hover) .chooser-divider { left: 62%; }
+#view-chooser:has(.panel-pf:hover)  .chooser-divider { left: 38%; }
+
+/* ── Chooser content layout ── */
+.ch-eyebrow {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .72rem;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  margin-bottom: 1.75rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+  transition: opacity .4s;
+}
+.panel-cfv .ch-eyebrow { color: var(--cfv-gold); }
+.panel-pf  .ch-eyebrow { color: var(--pf-gold); }
+
+.ch-emblem {
+  position: relative;
+  z-index: 2;
+  margin-bottom: 2.5rem;
+  transition: transform .5s var(--ease);
+}
+.panel-cfv:hover .ch-emblem,
+.panel-pf:hover  .ch-emblem { transform: scale(1.06); }
+
+.ch-title {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  margin-bottom: 1.25rem;
+}
+.panel-cfv .ch-title h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.6rem, 5vw, 4.2rem);
+  letter-spacing: .06em;
+  color: #fff;
+  line-height: .95;
+  margin-bottom: .3rem;
+}
+.panel-cfv .ch-title h2 em {
+  display: block;
+  color: var(--cfv-gold2);
+  font-style: normal;
+}
+.panel-pf .ch-title h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.9rem, 3.5vw, 3rem);
+  font-weight: 700;
+  color: var(--pf-navy);
+  line-height: 1.1;
+  margin-bottom: .3rem;
+}
+.panel-pf .ch-title h2 em {
+  display: block;
+  color: var(--pf-gold);
+  font-style: normal;
+}
+
+.ch-sub {
+  position: relative;
+  z-index: 2;
+  text-align: center;
+  font-size: .95rem;
+  font-weight: 400;
+  max-width: 320px;
+  line-height: 1.65;
+  margin-bottom: 2.5rem;
+  transition: opacity .4s;
+}
+.panel-cfv .ch-sub { color: rgba(255,255,255,.55); }
+.panel-pf  .ch-sub { color: rgba(13,31,60,.55); }
+
+.ch-cta {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .82rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: .8rem 2rem;
+  border-radius: 2px;
+  transition: all .3s var(--ease);
+  opacity: 1;
+  transform: translateY(0);
+}
+.panel-cfv .ch-cta {
+  background: var(--cfv-red);
+  color: #fff;
+  border: 1px solid var(--cfv-red2);
+}
+.panel-cfv .ch-cta:hover { background: var(--cfv-red2); }
+.panel-pf  .ch-cta {
+  background: var(--pf-navy);
+  color: var(--pf-bg);
+  border: 1px solid var(--pf-navy2);
+}
+.panel-pf .ch-cta:hover { background: var(--pf-navy2); }
+
+/* Corner label */
+.ch-corner {
+  position: absolute;
+  bottom: 2rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .65rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  z-index: 2;
+}
+.panel-cfv .ch-corner { color: rgba(255,255,255,.2); left: 2rem; }
+.panel-pf  .ch-corner { color: rgba(13,31,60,.25); right: 2rem; }
+
+/* Animated crosshair for CFV */
+.crosshair-bg {
+  position: absolute;
+  width: 500px; height: 500px;
+  top: 50%; left: 50%;
+  transform: translate(-50%,-50%);
+  opacity: .03;
+  pointer-events: none;
+  animation: slowSpin 40s linear infinite;
+}
+@keyframes slowSpin { to { transform: translate(-50%,-50%) rotate(360deg); } }
+
+/* Animated star for PF */
+.star-watermark {
+  position: absolute;
+  font-size: 320px;
+  color: rgba(154,124,58,.07);
+  bottom: -60px; right: -40px;
+  line-height: 1;
+  pointer-events: none;
+  font-family: serif;
+}
+
+/* Mobile chooser */
+@media (max-width: 700px) {
+  #view-chooser { flex-direction: column; }
+  .chooser-divider {
+    top: 50%; bottom: auto;
+    left: 0; right: 0;
+    width: auto; height: 4px;
+    background: linear-gradient(90deg, transparent, var(--cfv-red) 20%, var(--cfv-gold) 50%, var(--pf-gold2) 80%, transparent);
+  }
+  #view-chooser:has(.panel-cfv:hover) .chooser-divider,
+  #view-chooser:has(.panel-pf:hover)  .chooser-divider { left: 0; top: 50%; }
+  #view-chooser:has(.panel-cfv:hover) .panel-cfv { flex: 1.4; }
+  #view-chooser:has(.panel-cfv:hover) .panel-pf  { flex: 0.6; }
+  #view-chooser:has(.panel-pf:hover)  .panel-pf  { flex: 1.4; }
+  #view-chooser:has(.panel-pf:hover)  .panel-cfv { flex: 0.6; }
+  .ch-cta { opacity: 1; transform: translateY(0); }
+}
+
+
+/* ═══════════════════════════════════════════════
+   ██ SHARED NAV
+═══════════════════════════════════════════════ */
+.site-nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 200;
+  height: 68px;
+  display: flex;
+  align-items: center;
+  padding: 0 2rem;
+  justify-content: space-between;
+  transition: background .3s, border-color .3s;
+}
+.site-nav.cfv-nav {
+  background: rgba(8,14,20,.92);
+  border-bottom: 2px solid var(--cfv-red);
+  backdrop-filter: blur(10px);
+}
+.site-nav.pf-nav {
+  background: rgba(245,240,232,.95);
+  border-bottom: 2px solid var(--pf-gold2);
+  backdrop-filter: blur(10px);
+}
+
+.nav-back {
+  font-size: .7rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  padding: .4rem .9rem;
+  border-radius: 2px;
+  transition: all .25s;
+}
+.cfv-nav .nav-back {
+  color: rgba(255,255,255,.5);
+  border: 1px solid rgba(255,255,255,.15);
+}
+.cfv-nav .nav-back:hover { color: var(--cfv-gold); border-color: var(--cfv-gold); }
+.pf-nav  .nav-back {
+  color: var(--pf-muted);
+  border: 1px solid rgba(13,31,60,.2);
+}
+.pf-nav  .nav-back:hover { color: var(--pf-navy); border-color: var(--pf-navy); }
+
+.nav-logo-text {
+  font-weight: 700;
+  font-size: .8rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+.cfv-nav .nav-logo-text { color: #fff; font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; letter-spacing: .1em; }
+.pf-nav  .nav-logo-text { color: var(--pf-navy); font-family: 'Cinzel', serif; font-size: .82rem; }
+
+.nav-links-row {
+  display: flex;
+  gap: .15rem;
+  align-items: center;
+  list-style: none;
+}
+.nav-links-row a {
+  font-size: .88rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  font-weight: 600;
+  padding: .4rem .75rem;
+  border-radius: 2px;
+  transition: color .2s;
+  cursor: pointer;
+}
+.cfv-nav .nav-links-row a { color: rgba(255,255,255,.7); }
+.cfv-nav .nav-links-row a:hover { color: var(--cfv-gold2); }
+.pf-nav  .nav-links-row a { color: var(--pf-muted); }
+.pf-nav  .nav-links-row a:hover { color: var(--pf-navy); }
+
+.nav-cta-pill {
+  font-size: .72rem;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  font-weight: 700;
+  padding: .45rem 1.2rem;
+  border-radius: 2px;
+  margin-left: .5rem;
+  transition: all .25s;
+}
+.cfv-nav .nav-cta-pill { background: var(--cfv-red); color: #fff; border: 1px solid var(--cfv-red2); }
+.cfv-nav .nav-cta-pill:hover { background: var(--cfv-red2); }
+.pf-nav  .nav-cta-pill { background: var(--pf-navy); color: var(--pf-bg); border: 1px solid var(--pf-navy2); }
+.pf-nav  .nav-cta-pill:hover { background: var(--pf-navy2); }
+
+.hamburger {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  padding: 4px;
+}
+.hamburger span { display: block; width: 22px; height: 2px; border-radius: 1px; }
+.cfv-nav .hamburger span { background: #fff; }
+.pf-nav  .hamburger span { background: var(--pf-navy); }
+
+@media (max-width: 800px) {
+  .nav-links-row { display: none; }
+  .hamburger { display: flex; }
+}
+
+
+/* ═══════════════════════════════════════════════
+   ██ CFV LANDING — CLAYS FOR VETS
+═══════════════════════════════════════════════ */
+#view-cfv { background: var(--cfv-dark); color: #fff; }
+
+/* ── CFV Hero ── */
+.cfv-hero {
+  min-height: 100vh;
+  background: var(--cfv-dark);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 100px 2rem 4rem;
+}
+
+.cfv-hero-grid {
+  position: absolute; inset: 0;
+  background-image:
+    linear-gradient(rgba(178,34,52,.07) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(178,34,52,.07) 1px, transparent 1px);
+  background-size: 56px 56px;
+}
+.cfv-hero-glow {
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 60% 60% at 50% 55%, rgba(178,34,52,.22), transparent 70%);
+}
+.cfv-hero-stripes {
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(180deg,
+    rgba(178,34,52,.04) 0px, rgba(178,34,52,.04) 1px,
+    transparent 1px, transparent 40px);
+}
+
+.cfv-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4rem;
+  align-items: center;
+}
+
+.cfv-hero-left {}
+
+.cfv-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(178,34,52,.12);
+  border: 1px solid rgba(178,34,52,.4);
+  border-radius: 2px;
+  padding: .35rem .9rem;
+  font-size: .85rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--cfv-red2);
+  margin-bottom: 1.75rem;
+}
+
+.cfv-hero h1 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3.5rem, 7vw, 6rem);
+  line-height: .9;
+  letter-spacing: .04em;
+  color: #fff;
+  margin-bottom: .6rem;
+}
+.cfv-hero h1 span {
+  color: var(--cfv-gold2);
+  display: block;
+}
+
+.cfv-hero-sub {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.25rem;
+  font-weight: 300;
+  color: rgba(255,255,255,.55);
+  line-height: 1.7;
+  margin-bottom: 2rem;
+  max-width: 380px;
+}
+
+.cfv-stats-row {
+  display: flex;
+  gap: 2rem;
+  padding: 1.25rem 0;
+  border-top: 1px solid rgba(255,255,255,.1);
+  border-bottom: 1px solid rgba(255,255,255,.1);
+  margin-bottom: 2rem;
+}
+.cfv-stat-num {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 2.2rem;
+  color: var(--cfv-gold2);
+  line-height: 1;
+  letter-spacing: .05em;
+}
+.cfv-stat-lbl {
+  font-size: .82rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.38);
+  margin-top: 3px;
+}
+
+.cfv-btn-row { display: flex; gap: .75rem; flex-wrap: wrap; }
+
+.btn-cfv-primary {
+  background: var(--cfv-red);
+  color: #fff;
+  border: 1px solid var(--cfv-red2);
+  padding: .82rem 1.8rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem;
+  font-weight: 700;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all .25s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-cfv-primary:hover { background: var(--cfv-red2); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(178,34,52,.4); }
+
+.btn-cfv-outline {
+  background: transparent;
+  color: rgba(255,255,255,.75);
+  border: 1px solid rgba(255,255,255,.25);
+  padding: .82rem 1.8rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .8rem;
+  font-weight: 600;
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all .25s;
+}
+.btn-cfv-outline:hover { border-color: var(--cfv-gold2); color: var(--cfv-gold2); }
+
+/* CFV Hero right — crosshair emblem */
+.cfv-hero-right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cfv-crosshair-wrap {
+  position: relative;
+  width: 280px; height: 280px;
+}
+.cfv-crosshair-wrap svg {
+  width: 100%; height: 100%;
+  animation: slowSpin 30s linear infinite;
+}
+.cfv-crosshair-wrap .inner-fixed {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cfv-crosshair-wrap .inner-fixed svg { animation: none; width: 60%; height: 60%; }
+
+/* CFV Event Strip */
+.cfv-event-strip {
+  background: var(--cfv-red);
+  padding: 1.4rem 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3rem;
+  flex-wrap: wrap;
+}
+.cfv-event-strip .ev-item {
+  text-align: center;
+}
+.cfv-event-strip .ev-val {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.5rem;
+  letter-spacing: .06em;
+  color: #fff;
+  line-height: 1;
+}
+.cfv-event-strip .ev-key {
+  font-size: .62rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.65);
+  margin-top: 3px;
+}
+.cfv-strip-divider {
+  width: 1px; height: 40px;
+  background: rgba(255,255,255,.2);
+}
+
+/* CFV Section base */
+.cfv-section {
+  padding: 5.5rem 2rem;
+}
+.cfv-inner { max-width: 1100px; margin: 0 auto; }
+
+.cfv-lbl {
+  font-size: .85rem;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--cfv-red2);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+.cfv-lbl::before { content: ''; display: block; width: 28px; height: 2px; background: var(--cfv-red); }
+
+.cfv-h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.4rem, 4.5vw, 3.6rem);
+  letter-spacing: .04em;
+  color: #fff;
+  line-height: 1;
+  margin-bottom: 1rem;
+}
+.cfv-h2 em { color: var(--cfv-gold2); font-style: normal; }
+
+.cfv-body {
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 400;
+  color: rgba(255,255,255,.55);
+  line-height: 1.75;
+  max-width: 560px;
+}
+
+/* CFV What's Included cards */
+.cfv-include-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1px;
+  margin-top: 3rem;
+  border: 1px solid rgba(178,34,52,.2);
+}
+.cfv-inc-card {
+  background: rgba(255,255,255,.02);
+  padding: 1.8rem;
+  border: 1px solid rgba(178,34,52,.12);
+  transition: background .25s;
+}
+.cfv-inc-card:hover { background: rgba(178,34,52,.08); }
+.cfv-inc-icon {
+  font-size: 1.6rem;
+  margin-bottom: .75rem;
+}
+.cfv-inc-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.25rem;
+  letter-spacing: .05em;
+  color: var(--cfv-gold2);
+  margin-bottom: .4rem;
+}
+.cfv-inc-body {
+  font-size: 1rem;
+  color: rgba(255,255,255,.5);
+  line-height: 1.6;
+}
+
+/* CFV sponsor tiers */
+.cfv-tier-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 2.5rem;
+}
+.cfv-tier {
+  border: 1px solid rgba(178,34,52,.25);
+  border-top: 3px solid var(--cfv-red);
+  padding: 2rem 1.5rem;
+  position: relative;
+  transition: border-color .25s, transform .25s;
+}
+.cfv-tier:hover { border-color: var(--cfv-gold); transform: translateY(-4px); }
+.cfv-tier-price {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3rem;
+  color: var(--cfv-gold2);
+  letter-spacing: .04em;
+  line-height: 1;
+}
+.cfv-tier-name {
+  font-size: .85rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--cfv-red2);
+  margin: .4rem 0 1rem;
+  font-weight: 700;
+}
+.cfv-tier ul { list-style: none; }
+.cfv-tier li {
+  font-size: 1rem;
+  color: rgba(255,255,255,.55);
+  padding: .35rem 0;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  gap: .6rem;
+}
+.cfv-tier li::before { content: '▸'; color: var(--cfv-gold); font-size: .7rem; flex-shrink: 0; }
+
+/* CFV gallery strip */
+.cfv-gallery-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+}
+.cfv-gi {
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+.cfv-gi img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease), filter .5s;
+  filter: brightness(.8) saturate(.85);
+}
+.cfv-gi:hover img { transform: scale(1.08); filter: brightness(1) saturate(1); }
+.cfv-gi-cap {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(8,14,20,.8), transparent 50%);
+  display: flex;
+  align-items: flex-end;
+  padding: .75rem;
+  opacity: 0;
+  transition: opacity .3s;
+}
+.cfv-gi:hover .cfv-gi-cap { opacity: 1; }
+.cfv-gi-cap span {
+  font-size: .68rem;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.85);
+}
+
+/* CFV schedule */
+.cfv-schedule {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  margin-top: 1.5rem;
+}
+.cfv-sched-row {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  padding: 1.1rem 1.5rem;
+  border-left: 4px solid rgba(178,34,52,.4);
+  background: rgba(255,255,255,.03);
+  transition: border-color .25s, background .25s;
+}
+.cfv-sched-row:hover { border-left-color: var(--cfv-red); background: rgba(178,34,52,.08); }
+.cfv-sched-time {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.6rem;
+  letter-spacing: .08em;
+  color: var(--cfv-gold2);
+  white-space: nowrap;
+  min-width: 95px;
+}
+.cfv-sched-label {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: rgba(255,255,255,.85);
+  letter-spacing: .02em;
+}
+
+/* CFV CTA band */
+.cfv-cta-band {
+  background: var(--cfv-red);
+  padding: 5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.cfv-cta-band::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: repeating-linear-gradient(90deg, rgba(255,255,255,.04) 0, rgba(255,255,255,.04) 1px, transparent 1px, transparent 60px);
+}
+.cfv-cta-band h2 {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(2.8rem,6vw,5rem);
+  letter-spacing: .06em;
+  color: #fff;
+  position: relative;
+  z-index: 2;
+  margin-bottom: .5rem;
+}
+.cfv-cta-band p {
+  font-size: 1rem;
+  color: rgba(255,255,255,.7);
+  margin-bottom: 2rem;
+  position: relative;
+  z-index: 2;
+}
+.cfv-cta-band .btn-cfv-primary { background: var(--cfv-dark); border-color: rgba(255,255,255,.1); position: relative; z-index: 2; }
+.cfv-cta-band .btn-cfv-primary:hover { background: var(--cfv-navy); }
+
+/* CFV register form */
+.cfv-form-wrap {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(178,34,52,.2);
+  padding: 2.5rem;
+}
+.cfv-fg { margin-bottom: 1.1rem; }
+.cfv-fg label {
+  display: block;
+  font-size: .78rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--cfv-gold);
+  margin-bottom: .35rem;
+  font-weight: 700;
+}
+.cfv-fg input,
+.cfv-fg select,
+.cfv-fg textarea {
+  width: 100%;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.12);
+  color: #fff;
+  padding: .75rem 1rem;
+  font-family: 'Barlow Condensed', sans-serif;
+  font-size: .95rem;
+  border-radius: 2px;
+  transition: border-color .25s;
+}
+.cfv-fg input:focus,
+.cfv-fg select:focus,
+.cfv-fg textarea:focus {
+  outline: none;
+  border-color: var(--cfv-red);
+}
+.cfv-fg select option { background: #12202e; }
+.cfv-fg textarea { min-height: 100px; resize: vertical; }
+
+/* CFV footer */
+.cfv-footer {
+  background: #060b10;
+  border-top: 3px solid var(--cfv-red);
+  padding: 3.5rem 2rem 2rem;
+}
+.cfv-footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 2.5rem;
+}
+.cfv-footer-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  color: #fff;
+  letter-spacing: .08em;
+  margin-bottom: .5rem;
+}
+.cfv-footer-logo span { color: var(--cfv-gold2); }
+.cfv-footer p {
+  font-size: 1rem;
+  color: rgba(255,255,255,.3);
+  line-height: 1.7;
+  max-width: 280px;
+  margin-top: .75rem;
+}
+.cfv-footer-col h4 {
+  font-size: .78rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--cfv-gold);
+  margin-bottom: .8rem;
+}
+.cfv-footer-col ul { list-style: none; }
+.cfv-footer-col li { margin-bottom: .4rem; }
+.cfv-footer-col a {
+  font-size: 1rem;
+  color: rgba(255,255,255,.3);
+  transition: color .2s;
+  cursor: pointer;
+}
+.cfv-footer-col a:hover { color: var(--cfv-gold); }
+.cfv-footer-bar {
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  color: rgba(255,255,255,.2);
+  max-width: 1100px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+/* CFV two-col layout */
+.cfv-two { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.cfv-two.center { align-items: center; }
+
+@media (max-width: 900px) {
+  .cfv-hero-inner,
+  .cfv-two { grid-template-columns: 1fr; }
+  .cfv-hero-right { display: none; }
+  .cfv-tier-row { grid-template-columns: 1fr; }
+  .cfv-gallery-strip { grid-template-columns: repeat(2,1fr); }
+  .cfv-include-grid { grid-template-columns: 1fr; }
+  .cfv-footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .cfv-gallery-strip { grid-template-columns: repeat(2,1fr); }
+  .cfv-footer-inner { grid-template-columns: 1fr; }
+  .cfv-event-strip { gap: 1.5rem; }
+  .cfv-strip-divider { display: none; }
+}
+
+
+/* ═══════════════════════════════════════════════
+   ██ PF LANDING — PHIL FESSENDEN FOUNDATION
+═══════════════════════════════════════════════ */
+#view-pf { background: var(--pf-cream); color: var(--pf-navy); }
+
+/* ── PF Hero ── */
+.pf-hero {
+  min-height: 100vh;
+  background: var(--pf-navy);
+  position: relative;
+  overflow: hidden;
+  display: grid;
+  place-items: center;
+  padding: 100px 2rem 5rem;
+}
+
+.pf-hero-texture {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 70% 50% at 50% 0%, rgba(196,163,90,.12), transparent 55%),
+    radial-gradient(ellipse 50% 70% at 80% 60%, rgba(26,52,96,.8), transparent 60%),
+    radial-gradient(ellipse 40% 50% at 15% 80%, rgba(154,124,58,.08), transparent 55%);
+  pointer-events: none;
+}
+.pf-hero-lines {
+  position: absolute; inset: 0;
+  background:
+    repeating-linear-gradient(0deg, rgba(196,163,90,.04) 0, rgba(196,163,90,.04) 1px, transparent 1px, transparent 60px);
+  pointer-events: none;
+}
+
+.pf-hero-inner {
+  position: relative;
+  z-index: 2;
+  max-width: 900px;
+  width: 100%;
+  text-align: center;
+}
+
+.pf-medal-wrap {
+  margin: 0 auto 2.5rem;
+  width: 96px; height: 96px;
+  border-radius: 50%;
+  border: 2px solid rgba(196,163,90,.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(196,163,90,.06);
+  animation: pulseBorder 3s ease infinite;
+}
+@keyframes pulseBorder {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(196,163,90,.3); }
+  50%       { box-shadow: 0 0 0 12px rgba(196,163,90,0); }
+}
+
+.pf-eyebrow {
+  font-family: 'Cinzel', serif;
+  font-size: .85rem;
+  letter-spacing: .35em;
+  text-transform: uppercase;
+  color: var(--pf-gold2);
+  margin-bottom: 1.5rem;
+}
+
+.pf-hero h1 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(2.2rem, 5vw, 4rem);
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.15;
+  margin-bottom: .6rem;
+}
+.pf-hero h1 em {
+  display: block;
+  color: var(--pf-gold2);
+  font-style: italic;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.1em;
+  font-weight: 400;
+}
+.pf-hero-sub {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.3rem;
+  color: rgba(255,255,255,.55);
+  line-height: 1.75;
+  max-width: 600px;
+  margin: 1.25rem auto 2.5rem;
+}
+
+.pf-divider-ornament {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin: 1.5rem auto;
+}
+.pf-divider-ornament::before,
+.pf-divider-ornament::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: rgba(196,163,90,.3);
+  max-width: 160px;
+}
+.pf-divider-ornament span {
+  color: var(--pf-gold2);
+  font-size: 1rem;
+}
+
+.pf-hero-stats {
+  display: flex;
+  gap: 3rem;
+  justify-content: center;
+  margin-top: 2.5rem;
+  flex-wrap: wrap;
+}
+.pf-stat-num {
+  font-family: 'Cinzel', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--pf-gold2);
+  line-height: 1;
+}
+.pf-stat-lbl {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.05rem;
+  color: rgba(255,255,255,.4);
+  margin-top: 5px;
+  font-style: italic;
+}
+
+.btn-pf-primary {
+  background: var(--pf-gold2);
+  color: var(--pf-navy);
+  border: 1px solid var(--pf-gold);
+  padding: .85rem 2.2rem;
+  font-family: 'Cinzel', serif;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all .3s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.btn-pf-primary:hover { background: var(--pf-gold); transform: translateY(-2px); box-shadow: 0 8px 24px rgba(154,124,58,.3); }
+
+.btn-pf-outline {
+  background: transparent;
+  color: rgba(255,255,255,.65);
+  border: 1px solid rgba(196,163,90,.3);
+  padding: .85rem 2.2rem;
+  font-family: 'Cinzel', serif;
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  border-radius: 2px;
+  transition: all .3s;
+}
+.btn-pf-outline:hover { border-color: var(--pf-gold2); color: var(--pf-gold2); }
+
+.pf-hero-btns { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+
+/* PF Section */
+.pf-section { padding: 6rem 2rem; }
+.pf-section.bg-cream { background: var(--pf-cream); }
+.pf-section.bg-white { background: var(--pf-bg); }
+.pf-section.bg-navy  { background: var(--pf-navy); }
+
+.pf-inner { max-width: 1100px; margin: 0 auto; }
+
+.pf-lbl {
+  font-family: 'Cinzel', serif;
+  font-size: .82rem;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--pf-gold);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1rem;
+}
+.pf-lbl::before,
+.pf-lbl::after {
+  content: '';
+  display: block;
+  height: 1px;
+  background: var(--pf-gold2);
+  opacity: .4;
+  width: 32px;
+}
+.pf-lbl.center { justify-content: center; }
+
+.pf-h2 {
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.8rem, 3.5vw, 2.9rem);
+  font-weight: 700;
+  color: var(--pf-navy);
+  line-height: 1.15;
+  margin-bottom: 1rem;
+}
+.pf-h2.lt { color: #fff; }
+.pf-h2 em { color: var(--pf-gold); font-style: italic; font-family: 'Cormorant Garamond', serif; }
+.pf-h2.center { text-align: center; }
+
+.pf-body {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.2rem;
+  color: rgba(13,31,60,.65);
+  line-height: 1.85;
+  max-width: 580px;
+}
+.pf-body.lt { color: rgba(255,255,255,.55); }
+
+/* PF impact cards */
+.pf-impact-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+.pf-impact-card {
+  background: #fff;
+  border: 1px solid rgba(154,124,58,.15);
+  border-top: 3px solid var(--pf-gold2);
+  padding: 2rem 1.75rem;
+  transition: transform .3s, box-shadow .3s;
+}
+.pf-impact-card:hover { transform: translateY(-5px); box-shadow: 0 12px 36px rgba(154,124,58,.12); }
+.pf-ic-icon { font-size: 1.8rem; margin-bottom: 1rem; }
+.pf-ic-title {
+  font-family: 'Cinzel', serif;
+  font-size: .95rem;
+  font-weight: 700;
+  color: var(--pf-navy);
+  margin-bottom: .6rem;
+}
+.pf-ic-body {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.1rem;
+  color: rgba(13,31,60,.6);
+  line-height: 1.7;
+}
+
+/* PF quote */
+.pf-quote {
+  border-left: 3px solid var(--pf-gold2);
+  padding: 1.25rem 0 1.25rem 1.75rem;
+  margin: 2rem 0;
+}
+.pf-quote blockquote {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 1.65rem;
+  font-style: italic;
+  color: var(--pf-navy);
+  line-height: 1.5;
+  margin-bottom: .5rem;
+}
+.pf-quote cite {
+  font-family: 'Cinzel', serif;
+  font-size: .78rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--pf-gold);
+  font-style: normal;
+}
+
+/* PF gallery */
+.pf-gallery {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+  margin-top: 2.5rem;
+}
+.pf-gi {
+  aspect-ratio: 1;
+  overflow: hidden;
+  cursor: pointer;
+  position: relative;
+}
+.pf-gi img {
+  width: 100%; height: 100%;
+  object-fit: cover;
+  transition: transform .5s var(--ease), filter .5s;
+  filter: sepia(.2) brightness(.95);
+}
+.pf-gi:hover img { transform: scale(1.05); filter: sepia(0) brightness(1.05); }
+.pf-gi-overlay {
+  position: absolute; inset: 0;
+  background: linear-gradient(to top, rgba(13,31,60,.7), transparent 55%);
+  opacity: 0;
+  transition: opacity .3s;
+  display: flex;
+  align-items: flex-end;
+  padding: 1rem;
+}
+.pf-gi:hover .pf-gi-overlay { opacity: 1; }
+.pf-gi-overlay span {
+  font-family: 'Cinzel', serif;
+  font-size: .65rem;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: var(--pf-gold2);
+}
+
+/* PF donate tiers */
+.pf-donate-tiers {
+  display: grid;
+  grid-template-columns: repeat(4,1fr);
+  gap: 1rem;
+  margin-bottom: 1.75rem;
+}
+.pf-tier {
+  border: 1px solid rgba(154,124,58,.25);
+  padding: 1.25rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all .25s;
+  background: rgba(255,255,255,.5);
+}
+.pf-tier:hover, .pf-tier.sel {
+  border-color: var(--pf-gold2);
+  background: rgba(196,163,90,.08);
+}
+.pf-tier-amt {
+  font-family: 'Cinzel', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--pf-navy);
+}
+.pf-tier-desc {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  color: var(--pf-muted);
+  margin-top: .3rem;
+  font-style: italic;
+}
+
+/* PF form */
+.pf-form-wrap {
+  background: #fff;
+  border: 1px solid rgba(154,124,58,.18);
+  padding: 2.5rem;
+}
+.pf-fg { margin-bottom: 1.1rem; }
+.pf-fg label {
+  display: block;
+  font-family: 'Cinzel', serif;
+  font-size: .75rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--pf-gold);
+  margin-bottom: .4rem;
+  font-weight: 600;
+}
+.pf-fg input,
+.pf-fg select,
+.pf-fg textarea {
+  width: 100%;
+  background: var(--pf-cream);
+  border: 1px solid rgba(154,124,58,.2);
+  color: var(--pf-navy);
+  padding: .75rem 1rem;
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  border-radius: 2px;
+  transition: border-color .25s;
+}
+.pf-fg input:focus,
+.pf-fg select:focus,
+.pf-fg textarea:focus {
+  outline: none;
+  border-color: var(--pf-gold2);
+}
+.pf-fg textarea { min-height: 110px; resize: vertical; }
+
+/* PF two-col */
+.pf-two { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; align-items: start; }
+.pf-two.center { align-items: center; }
+
+/* PF CTA band */
+.pf-cta-band {
+  background: var(--pf-navy);
+  padding: 5rem 2rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.pf-cta-band::before {
+  content: '✦';
+  position: absolute;
+  font-size: 400px;
+  color: rgba(196,163,90,.04);
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%,-50%);
+  pointer-events: none;
+  font-family: serif;
+}
+.pf-cta-band .pf-lbl { justify-content: center; }
+.pf-cta-band .pf-h2 { color: #fff; }
+.pf-cta-band p {
+  font-family: 'EB Garamond', serif;
+  font-size: 1.1rem;
+  color: rgba(255,255,255,.5);
+  max-width: 520px;
+  margin: 0 auto 2.5rem;
+  font-style: italic;
+}
+.pf-cta-band .btn-pf-outline {
+  color: rgba(255,255,255,.7);
+  border-color: rgba(196,163,90,.3);
+}
+
+/* PF footer */
+.pf-footer {
+  background: var(--pf-navy);
+  border-top: 3px solid var(--pf-gold2);
+  padding: 4rem 2rem 2rem;
+  color: rgba(255,255,255,.35);
+}
+.pf-footer-inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+.pf-footer-logo {
+  font-family: 'Cinzel', serif;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--pf-gold2);
+  margin-bottom: .6rem;
+}
+.pf-footer p {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  line-height: 1.7;
+  max-width: 280px;
+  margin-top: .5rem;
+  font-style: italic;
+}
+.pf-footer-col h4 {
+  font-family: 'Cinzel', serif;
+  font-size: .75rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--pf-gold2);
+  margin-bottom: .85rem;
+}
+.pf-footer-col ul { list-style: none; }
+.pf-footer-col li { margin-bottom: .45rem; }
+.pf-footer-col a {
+  font-family: 'EB Garamond', serif;
+  font-size: 1rem;
+  color: rgba(255,255,255,.3);
+  transition: color .2s;
+  cursor: pointer;
+  font-style: italic;
+}
+.pf-footer-col a:hover { color: var(--pf-gold2); }
+.pf-footer-bar {
+  border-top: 1px solid rgba(255,255,255,.06);
+  padding-top: 1.5rem;
+  display: flex;
+  justify-content: space-between;
+  font-size: .72rem;
+  max-width: 1100px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  gap: .5rem;
+}
+
+@media (max-width: 900px) {
+  .pf-two { grid-template-columns: 1fr; }
+  .pf-impact-grid { grid-template-columns: 1fr 1fr; }
+  .pf-gallery { grid-template-columns: repeat(2,1fr); }
+  .pf-donate-tiers { grid-template-columns: repeat(2,1fr); }
+  .pf-footer-inner { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .pf-gallery { grid-template-columns: repeat(2,1fr); }
+  .pf-impact-grid { grid-template-columns: 1fr; }
+  .pf-footer-inner { grid-template-columns: 1fr; }
+}
+
+/* ═══════════════════════════════════════════════
+   LIGHTBOX
+═══════════════════════════════════════════════ */
+.lightbox {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,.94);
+  z-index: 999;
+  align-items: center;
+  justify-content: center;
+}
+.lightbox.open { display: flex; }
+.lightbox img { max-width: 90vw; max-height: 88vh; object-fit: contain; border-radius: 2px; }
+.lb-close {
+  position: absolute; top: 1.5rem; right: 1.5rem;
+  background: none; border: none;
+  color: rgba(255,255,255,.6);
+  font-size: 2rem;
+  cursor: pointer;
+  line-height: 1;
+  transition: color .2s;
+}
+.lb-close:hover { color: #fff; }
+
+/* ── success message ── */
+.form-success {
+  display: none;
+  text-align: center;
+  padding: 2.5rem 1.5rem;
+}
+.cfv-form-success { color: var(--cfv-gold2); }
+.pf-form-success  { color: var(--pf-gold); }
+.form-success h3 {
+  font-family: 'Cinzel', serif;
+  font-size: 1.4rem;
+  margin-bottom: .5rem;
+}
+.cfv-form-success h3 { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: .06em; color: var(--cfv-gold2); }
+.form-success p { font-family: 'EB Garamond', serif; font-size: 1rem; opacity: .7; }
+
+</style>
+</head>
+<body>
+
+<!-- ╔═══════════════════════════════════════════╗
+     ║         CHOOSER SCREEN                   ║
+     ╚═══════════════════════════════════════════╝ -->
+<div id="view-chooser" class="view active">
+
+  <!-- Left panel: Clays for Vets -->
+  <div class="chooser-panel panel-cfv" onclick="goTo('cfv')">
+
+    <svg class="crosshair-bg" viewBox="0 0 400 400" fill="none">
+      <circle cx="200" cy="200" r="190" stroke="#b22234" stroke-width=".75"/>
+      <circle cx="200" cy="200" r="140" stroke="#b22234" stroke-width=".5"/>
+      <circle cx="200" cy="200" r="90" stroke="#c9a84c" stroke-width=".75"/>
+      <circle cx="200" cy="200" r="40" stroke="#c9a84c" stroke-width="1.5"/>
+      <line x1="200" y1="10" x2="200" y2="160" stroke="#b22234" stroke-width=".75"/>
+      <line x1="200" y1="240" x2="200" y2="390" stroke="#b22234" stroke-width=".75"/>
+      <line x1="10" y1="200" x2="160" y2="200" stroke="#b22234" stroke-width=".75"/>
+      <line x1="240" y1="200" x2="390" y2="200" stroke="#b22234" stroke-width=".75"/>
+      <line x1="60" y1="60" x2="130" y2="130" stroke="#b22234" stroke-width=".4" opacity=".5"/>
+      <line x1="340" y1="60" x2="270" y2="130" stroke="#b22234" stroke-width=".4" opacity=".5"/>
+      <line x1="60" y1="340" x2="130" y2="270" stroke="#b22234" stroke-width=".4" opacity=".5"/>
+      <line x1="340" y1="340" x2="270" y2="270" stroke="#b22234" stroke-width=".4" opacity=".5"/>
+    </svg>
+
+    <p class="ch-eyebrow">
+      <span style="display:inline-block;width:20px;height:1px;background:currentColor"></span>
+      Annual Fun Shoot · Sarasota, FL
+      <span style="display:inline-block;width:20px;height:1px;background:currentColor"></span>
+    </p>
+
+    <div class="ch-emblem">
+      <svg width="120" height="120" viewBox="0 0 120 120" fill="none">
+        <circle cx="60" cy="60" r="56" stroke="#c9a84c" stroke-width="1.5" opacity=".5"/>
+        <circle cx="60" cy="60" r="38" stroke="#fff" stroke-width="1" opacity=".2"/>
+        <circle cx="60" cy="60" r="20" stroke="#b22234" stroke-width="2" opacity=".9"/>
+        <circle cx="60" cy="60" r="6" fill="#c9a84c"/>
+        <line x1="60" y1="4" x2="60" y2="36" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="60" y1="84" x2="60" y2="116" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="4" y1="60" x2="36" y2="60" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+        <line x1="84" y1="60" x2="116" y2="60" stroke="#c9a84c" stroke-width="2" stroke-linecap="round"/>
+      </svg>
+    </div>
+
+    <div class="ch-title">
+      <h2>Sporting Clays <em>for Vets</em></h2>
+    </div>
+
+    <p class="ch-sub">Annual sporting clays competition, gun raffle, and catered lunch — all benefiting local disabled veterans.</p>
+
+    <button class="ch-cta">Enter Site →</button>
+
+    <p class="ch-corner">Englewood Masonic Lodge No. 360</p>
+  </div>
+
+  <!-- Divider -->
+  <div class="chooser-divider"></div>
+
+  <!-- Right panel: Phil Fessenden -->
+  <div class="chooser-panel panel-pf" onclick="goTo('pf')">
+
+    <div class="star-watermark">✦</div>
+
+    <p class="ch-eyebrow">
+      <span style="display:inline-block;width:20px;height:1px;background:currentColor"></span>
+      Veterans Fund · Sarasota County
+      <span style="display:inline-block;width:20px;height:1px;background:currentColor"></span>
+    </p>
+
+    <div class="ch-emblem">
+      <svg width="130" height="86" viewBox="0 0 130 86" xmlns="http://www.w3.org/2000/svg" style="border-radius:3px;box-shadow:0 4px 24px rgba(0,0,0,.25)">
+        <!-- Stripes: 13 alternating red/white -->
+        <rect width="130" height="86" fill="#B22234"/>
+        <rect y="6.6" width="130" height="6.6" fill="#fff"/>
+        <rect y="19.8" width="130" height="6.6" fill="#fff"/>
+        <rect y="33" width="130" height="6.6" fill="#fff"/>
+        <rect y="46.2" width="130" height="6.6" fill="#fff"/>
+        <rect y="59.4" width="130" height="6.6" fill="#fff"/>
+        <rect y="72.6" width="130" height="6.6" fill="#fff"/>
+        <!-- Canton (blue field) — wider to space stars, height locked to 46.2 (7 red stripes) -->
+        <rect width="55" height="46.2" fill="#3C3B6E"/>
+        <!--
+          50 stars: 9 rows alternating 6 and 5 stars
+          Canton width 58px → col spacing 9px, start x=5
+          Row spacing 4.6px to fit 9 rows inside 46.2px (top pad 3, bottom pad 3.2)
+          Even rows (1,3,5,7,9): 6 stars, x= 5,14,23,32,41,50
+          Odd rows  (2,4,6,8):   5 stars, offset +4.5, x= 9.5,18.5,27.5,36.5,45.5
+        -->
+        <!-- Row 1: 6 stars, y=3.5 -->
+        <circle cx="5"  cy="3.5"  r="1.7" fill="#fff"/>
+        <circle cx="14" cy="3.5"  r="1.7" fill="#fff"/>
+        <circle cx="23" cy="3.5"  r="1.7" fill="#fff"/>
+        <circle cx="32" cy="3.5"  r="1.7" fill="#fff"/>
+        <circle cx="41" cy="3.5"  r="1.7" fill="#fff"/>
+        <circle cx="50" cy="3.5"  r="1.7" fill="#fff"/>
+        <!-- Row 2: 5 stars, y=8.1 -->
+        <circle cx="9.5"  cy="8.1" r="1.7" fill="#fff"/>
+        <circle cx="18.5" cy="8.1" r="1.7" fill="#fff"/>
+        <circle cx="27.5" cy="8.1" r="1.7" fill="#fff"/>
+        <circle cx="36.5" cy="8.1" r="1.7" fill="#fff"/>
+        <circle cx="45.5" cy="8.1" r="1.7" fill="#fff"/>
+        <!-- Row 3: 6 stars, y=12.7 -->
+        <circle cx="5"  cy="12.7" r="1.7" fill="#fff"/>
+        <circle cx="14" cy="12.7" r="1.7" fill="#fff"/>
+        <circle cx="23" cy="12.7" r="1.7" fill="#fff"/>
+        <circle cx="32" cy="12.7" r="1.7" fill="#fff"/>
+        <circle cx="41" cy="12.7" r="1.7" fill="#fff"/>
+        <circle cx="50" cy="12.7" r="1.7" fill="#fff"/>
+        <!-- Row 4: 5 stars, y=17.3 -->
+        <circle cx="9.5"  cy="17.3" r="1.7" fill="#fff"/>
+        <circle cx="18.5" cy="17.3" r="1.7" fill="#fff"/>
+        <circle cx="27.5" cy="17.3" r="1.7" fill="#fff"/>
+        <circle cx="36.5" cy="17.3" r="1.7" fill="#fff"/>
+        <circle cx="45.5" cy="17.3" r="1.7" fill="#fff"/>
+        <!-- Row 5: 6 stars, y=21.9 -->
+        <circle cx="5"  cy="21.9" r="1.7" fill="#fff"/>
+        <circle cx="14" cy="21.9" r="1.7" fill="#fff"/>
+        <circle cx="23" cy="21.9" r="1.7" fill="#fff"/>
+        <circle cx="32" cy="21.9" r="1.7" fill="#fff"/>
+        <circle cx="41" cy="21.9" r="1.7" fill="#fff"/>
+        <circle cx="50" cy="21.9" r="1.7" fill="#fff"/>
+        <!-- Row 6: 5 stars, y=26.5 -->
+        <circle cx="9.5"  cy="26.5" r="1.7" fill="#fff"/>
+        <circle cx="18.5" cy="26.5" r="1.7" fill="#fff"/>
+        <circle cx="27.5" cy="26.5" r="1.7" fill="#fff"/>
+        <circle cx="36.5" cy="26.5" r="1.7" fill="#fff"/>
+        <circle cx="45.5" cy="26.5" r="1.7" fill="#fff"/>
+        <!-- Row 7: 6 stars, y=31.1 -->
+        <circle cx="5"  cy="31.1" r="1.7" fill="#fff"/>
+        <circle cx="14" cy="31.1" r="1.7" fill="#fff"/>
+        <circle cx="23" cy="31.1" r="1.7" fill="#fff"/>
+        <circle cx="32" cy="31.1" r="1.7" fill="#fff"/>
+        <circle cx="41" cy="31.1" r="1.7" fill="#fff"/>
+        <circle cx="50" cy="31.1" r="1.7" fill="#fff"/>
+        <!-- Row 8: 5 stars, y=35.7 -->
+        <circle cx="9.5"  cy="35.7" r="1.7" fill="#fff"/>
+        <circle cx="18.5" cy="35.7" r="1.7" fill="#fff"/>
+        <circle cx="27.5" cy="35.7" r="1.7" fill="#fff"/>
+        <circle cx="36.5" cy="35.7" r="1.7" fill="#fff"/>
+        <circle cx="45.5" cy="35.7" r="1.7" fill="#fff"/>
+        <!-- Row 9: 6 stars, y=40.3 -->
+        <circle cx="5"  cy="40.3" r="1.7" fill="#fff"/>
+        <circle cx="14" cy="40.3" r="1.7" fill="#fff"/>
+        <circle cx="23" cy="40.3" r="1.7" fill="#fff"/>
+        <circle cx="32" cy="40.3" r="1.7" fill="#fff"/>
+        <circle cx="41" cy="40.3" r="1.7" fill="#fff"/>
+        <circle cx="50" cy="40.3" r="1.7" fill="#fff"/>
+      </svg>
+    </div>
+
+    <div class="ch-title">
+      <h2>CMS Phil Fessenden <em>Memorial Fund</em></h2>
+    </div>
+
+    <p class="ch-sub">Direct assistance to disabled veterans and first responders — wheelchairs, disaster relief, and community support.</p>
+
+    <button class="ch-cta">Enter Site →</button>
+
+    <p class="ch-corner" style="left:auto;right:2rem">Phil Fessenden Memorial Veterans Fund</p>
+  </div>
+
+</div><!-- /chooser -->
+
+
+<!-- ╔═══════════════════════════════════════════╗
+     ║     CLAYS FOR VETS LANDING               ║
+     ╚═══════════════════════════════════════════╝ -->
+<div id="view-cfv" class="view">
+
+  <!-- NAV -->
+  <nav class="site-nav cfv-nav">
+    <button class="nav-back" onclick="goTo('pf')">CMS Phil Fessenden</button>
+    <ul class="nav-links-row">
+      <li><a onclick="cfvScroll('cfv-about')">About</a></li>
+      <li><a onclick="cfvScroll('cfv-event')">Event</a></li>
+      <li><a onclick="cfvScroll('cfv-gallery-sec')">Gallery</a></li>
+      <li><a onclick="cfvScroll('cfv-sponsors-sec')">Sponsors</a></li>
+      <li><button class="nav-cta-pill" onclick="cfvScroll('cfv-register')">Register 2027</button></li>
+    </ul>
+    <button class="hamburger" onclick="this.nextElementSibling && this.nextElementSibling.classList.toggle('open')" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="cfv-hero">
+    <div class="cfv-hero-grid"></div>
+    <div class="cfv-hero-stripes"></div>
+    <div class="cfv-hero-glow"></div>
+
+    <div class="cfv-hero-inner">
+      <div class="cfv-hero-left">
+        <div class="cfv-badge">★ March 20, 2027 · Nokomis, FL</div>
+        <h1>Annual<br>Sporting<br>Clays <span>for Vets</span></h1>
+        <p class="cfv-hero-sub">A full day of sporting clays, gun raffles, trophies, and a whole roasted pig — all in honor of our veterans. Every net dollar goes directly to disabled vets and first responders.</p>
+        <div class="cfv-stats-row">
+          <div><div class="cfv-stat-num">$125</div><div class="cfv-stat-lbl">Entry Fee</div></div>
+          <div><div class="cfv-stat-num">12</div><div class="cfv-stat-lbl">Stations</div></div>
+          <div><div class="cfv-stat-num">2</div><div class="cfv-stat-lbl">Guns Raffled</div></div>
+          <div><div class="cfv-stat-num">100%</div><div class="cfv-stat-lbl">Net to Vets</div></div>
+        </div>
+        <div class="cfv-btn-row">
+          <button class="btn-cfv-primary" onclick="cfvScroll('cfv-register')">Register Now →</button>
+          <button class="btn-cfv-outline" onclick="cfvScroll('cfv-gallery-sec')">View Gallery</button>
+        </div>
+      </div>
+      <div class="cfv-hero-right">
+        <div class="cfv-crosshair-wrap">
+          <svg viewBox="0 0 280 280" fill="none">
+            <circle cx="140" cy="140" r="134" stroke="#c9a84c" stroke-width="1" opacity=".3"/>
+            <circle cx="140" cy="140" r="100" stroke="#b22234" stroke-width=".8" opacity=".4"/>
+            <circle cx="140" cy="140" r="60" stroke="#fff" stroke-width=".5" opacity=".15"/>
+            <circle cx="140" cy="140" r="20" stroke="#c9a84c" stroke-width="2" opacity=".8"/>
+            <line x1="140" y1="6" x2="140" y2="118" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/>
+            <line x1="140" y1="162" x2="140" y2="274" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/>
+            <line x1="6" y1="140" x2="118" y2="140" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/>
+            <line x1="162" y1="140" x2="274" y2="140" stroke="#c9a84c" stroke-width="1.5" opacity=".6"/>
+            <circle cx="140" cy="140" r="6" fill="#b22234"/>
+            <circle cx="140" cy="140" r="3" fill="#c9a84c"/>
+            <!-- tick marks -->
+            <line x1="140" y1="40" x2="140" y2="50" stroke="#c9a84c" stroke-width="1" opacity=".4"/>
+            <line x1="140" y1="230" x2="140" y2="240" stroke="#c9a84c" stroke-width="1" opacity=".4"/>
+            <line x1="40" y1="140" x2="50" y2="140" stroke="#c9a84c" stroke-width="1" opacity=".4"/>
+            <line x1="230" y1="140" x2="240" y2="140" stroke="#c9a84c" stroke-width="1" opacity=".4"/>
+          </svg>
+          <div class="inner-fixed">
+            <svg viewBox="0 0 100 100" fill="none">
+              <text x="50" y="58" text-anchor="middle" fill="#c9a84c" font-family="'Bebas Neue',sans-serif" font-size="18" opacity=".7" letter-spacing="2">CFV</text>
+            </svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENT STRIP -->
+  <div class="cfv-event-strip">
+    <div class="ev-item"><div class="ev-val">Saturday, March 20</div><div class="ev-key">Event Date · 2027</div></div>
+    <div class="cfv-strip-divider"></div>
+    <div class="ev-item"><div class="ev-val">8:00 AM</div><div class="ev-key">Registration Opens</div></div>
+    <div class="cfv-strip-divider"></div>
+    <div class="ev-item"><div class="ev-val">9:30 AM</div><div class="ev-key">Shotgun Start</div></div>
+    <div class="cfv-strip-divider"></div>
+    <div class="ev-item"><div class="ev-val">Sarasota Trap Skeet &amp; Clays</div><div class="ev-key">3445 Rustic Road · Nokomis, FL</div></div>
+    <div class="cfv-strip-divider"></div>
+    <div class="ev-item"><div class="ev-val">Denis Doome · 941-830-1249</div><div class="ev-key">Contact</div></div>
+  </div>
+
+  <!-- ABOUT / WHAT'S INCLUDED -->
+  <section class="cfv-section" id="cfv-about" style="background:var(--cfv-navy)">
+    <div class="cfv-inner">
+      <div class="cfv-two center">
+        <div>
+          <p class="cfv-lbl">The Mission</p>
+          <h2 class="cfv-h2">Shoot. <em>Give. Honor.</em></h2>
+          <p class="cfv-body" style="margin-bottom:1.25rem">The Annual Sporting Clays for Vets Fun Shoot is organized by Englewood Masonic Lodge No. 360 and the CMS Phil Fessenden Memorial Veterans Fund. Open to shooters of all skill levels — every net dollar raised goes directly to local disabled veterans and first responders.</p>
+          <p class="cfv-body">"Our thanks to those who defend democracy — for they bear the gift of liberty and pay the price of freedom."</p>
+        </div>
+        <div>
+          <img src="images/group-flag.png" alt="Competitors with American flag" style="width:100%;border:1px solid rgba(178,34,52,.25)" loading="lazy"/>
+        </div>
+      </div>
+
+      <div class="cfv-include-grid" style="margin-top:4rem">
+        <div class="cfv-inc-card">
+          <div class="cfv-inc-icon">🎯</div>
+          <div class="cfv-inc-title">12-Station Course</div>
+          <p class="cfv-inc-body">20 birds, all ammo &amp; clays included with your $125 entry. Golf cart included for the course.</p>
+        </div>
+        <div class="cfv-inc-card">
+          <div class="cfv-inc-icon">🔫</div>
+          <div class="cfv-inc-title">Gun Raffle</div>
+          <p class="cfv-inc-body">Two different guns raffled. All in-person shooters are automatically entered in an additional pistol drawing.</p>
+        </div>
+        <div class="cfv-inc-card">
+          <div class="cfv-inc-icon">🍖</div>
+          <div class="cfv-inc-title">Catered Lunch</div>
+          <p class="cfv-inc-body">Grampy's Charities fires up the smoker — full catered lunch with whole roasted pig, included with entry.</p>
+        </div>
+        <div class="cfv-inc-card">
+          <div class="cfv-inc-icon">🏆</div>
+          <div class="cfv-inc-title">Trophies</div>
+          <p class="cfv-inc-body">Trophies awarded for Top Team, Top Shooter, Top Female, and Top Youth.</p>
+        </div>
+        <div class="cfv-inc-card">
+          <div class="cfv-inc-icon">♿</div>
+          <div class="cfv-inc-title">All-Terrain Access</div>
+          <p class="cfv-inc-body">Off-road tracked wheelchairs available so disabled veterans can participate on any terrain.</p>
+        </div>
+        <div class="cfv-inc-card">
+          <div class="cfv-inc-icon">🎟</div>
+          <div class="cfv-inc-title">Merchandise Raffles</div>
+          <p class="cfv-inc-body">Additional raffle tickets sold separately. Great prizes from local sponsors and contributors.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EVENT DETAILS -->
+  <section class="cfv-section" id="cfv-event" style="background:var(--cfv-dark)">
+    <div class="cfv-inner">
+      <div class="cfv-two">
+        <div>
+          <p class="cfv-lbl">Schedule</p>
+          <h2 class="cfv-h2">Event Day <em>Timeline</em></h2>
+          <div class="cfv-schedule">
+            <div class="cfv-sched-row"><span class="cfv-sched-time">8:00 AM</span><span class="cfv-sched-label">Registration Opens</span></div>
+            <div class="cfv-sched-row"><span class="cfv-sched-time">9:15 AM</span><span class="cfv-sched-label">Mandatory Safety Briefing</span></div>
+            <div class="cfv-sched-row"><span class="cfv-sched-time">9:30 AM</span><span class="cfv-sched-label">Shotgun Start — All Stations</span></div>
+            <div class="cfv-sched-row"><span class="cfv-sched-time">11:30 AM</span><span class="cfv-sched-label">Catered Lunch · Awards · Raffles</span></div>
+          </div>
+          <div style="margin-top:2rem;padding:1.25rem;border-left:3px solid var(--cfv-gold);background:rgba(201,168,76,.06)">
+            <p style="font-size:.78rem;letter-spacing:.12em;text-transform:uppercase;color:var(--cfv-gold);font-weight:700;margin-bottom:.4rem">⚠ Sponsor Deadline</p>
+            <p style="font-size:.9rem;color:rgba(255,255,255,.6)">Artwork for banners and signage must be submitted by <strong style="color:#fff">March 5, 2027</strong>.</p>
+          </div>
+        </div>
+        <div>
+          <p class="cfv-lbl">Payment</p>
+          <h2 class="cfv-h2">How to <em>Pay</em></h2>
+          <div class="cfv-schedule">
+            <div class="cfv-sched-row"><span class="cfv-sched-time" style="font-size:1rem;min-width:70px">Cash</span><span class="cfv-sched-label">Accepted at the event or mailed in advance</span></div>
+            <div class="cfv-sched-row"><span class="cfv-sched-time" style="font-size:1rem;min-width:70px">Check</span><span class="cfv-sched-label">Payable to: Phil Fessenden Memorial Fund · 9442 Casa Grande Ave · Englewood, FL 34224</span></div>
+            <div class="cfv-sched-row"><span class="cfv-sched-time" style="font-size:1rem;min-width:70px">Zelle</span><span class="cfv-sched-label">Send to 941-830-1249</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPONSORS -->
+  <section class="cfv-section" id="cfv-sponsors-sec" style="background:var(--cfv-navy)">
+    <div class="cfv-inner">
+      <p class="cfv-lbl">Become a Sponsor</p>
+      <h2 class="cfv-h2">Sponsorship <em>Tiers</em></h2>
+      <p class="cfv-body" style="margin-bottom:0">All sponsor artwork deadline: <strong style="color:var(--cfv-gold2)">March 5, 2027</strong>. Contact Denis at 941-830-1249.</p>
+      <div class="cfv-tier-row">
+        <div class="cfv-tier">
+          <div class="cfv-tier-price">$200</div>
+          <div class="cfv-tier-name">Station Sponsor</div>
+          <ul><li>Sign placed at a shooting station</li></ul>
+        </div>
+        <div class="cfv-tier" style="border-top-color:var(--cfv-gold)">
+          <div class="cfv-tier-price">$750</div>
+          <div class="cfv-tier-name">Supporting Sponsor</div>
+          <ul>
+            <li>Shooting Station Sign</li>
+            <li>Logo on Event Banner</li>
+            <li>Registration for 4 People</li>
+          </ul>
+        </div>
+        <div class="cfv-tier" style="border-top-color:var(--cfv-gold2)">
+          <div class="cfv-tier-price">$1,500</div>
+          <div class="cfv-tier-name">Event Sponsor</div>
+          <ul>
+            <li>Shooting Station Sign</li>
+            <li>Top Billing on Event Banner</li>
+            <li>Registration for 8 People</li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-top:3.5rem">
+        <p class="cfv-lbl">Sponsors</p>
+        <h2 class="cfv-h2" style="font-size:2rem">Top Event <em>Sponsors</em></h2>
+        <div style="display:flex;gap:1rem;flex-wrap:wrap;margin-top:1.25rem">
+          <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:.7rem 1.4rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--cfv-gold2)">Chaz &amp; Dona Cabela</div>
+          <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:.7rem 1.4rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--cfv-gold2)">Grampy's Charities</div>
+          <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:.7rem 1.4rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--cfv-gold2)">Total Impact</div>
+          <div style="background:rgba(201,168,76,.08);border:1px solid rgba(201,168,76,.2);padding:.7rem 1.4rem;font-family:'Bebas Neue',sans-serif;font-size:1.1rem;letter-spacing:.06em;color:var(--cfv-gold2)">DRM Electric Englewood</div>
+        </div>
+        <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin-top:2rem">
+          <p class="cfv-lbl" style="width:100%;margin-bottom:.5rem">Sponsors</p>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Calkins LP Gas</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Real Bikes Venice</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Epic Community Center</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Palm Island Transit</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Superior Painting</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Voodoo Graphx</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">EcoRover</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Bert's Harley-Davidson</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Premier Tees</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Sarasota Trap &amp; Skeet</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Ricky &amp; Piper</div>
+          <div style="border:1px solid rgba(255,255,255,.08);padding:.6rem 1.2rem;font-size:1.15rem;color:rgba(255,255,255,.5)">Junior &amp; Rosie's</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="cfv-section" id="cfv-gallery-sec" style="background:var(--cfv-dark);padding-bottom:0">
+    <div class="cfv-inner" style="margin-bottom:2rem">
+      <p class="cfv-lbl">Past Events</p>
+      <h2 class="cfv-h2">On the <em>Range</em></h2>
+    </div>
+    <div class="cfv-gallery-strip">
+      <div class="cfv-gi" onclick="openLb('images/trophy-handshake.png')"><img src="images/trophy-handshake.png" alt="Trophy handshake" loading="lazy"/><div class="cfv-gi-cap"><span>Top Shooter Award</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/female-winner.png')"><img src="images/female-winner.png" alt="Top Female winner" loading="lazy"/><div class="cfv-gi-cap"><span>Top Female Trophy</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/youth-winner.png')"><img src="images/youth-winner.png" alt="Top Youth" loading="lazy"/><div class="cfv-gi-cap"><span>Top Youth Trophy</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/group-flag.png')"><img src="images/group-flag.png" alt="Group with flag" loading="lazy"/><div class="cfv-gi-cap"><span>Award Ceremony</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/roasted-pig.png')"><img src="images/roasted-pig.png" alt="Roasted pig" loading="lazy"/><div class="cfv-gi-cap"><span>Grampy's Whole Pig</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/bbq-smoker.png')"><img src="images/bbq-smoker.png" alt="BBQ smoker" loading="lazy"/><div class="cfv-gi-cap"><span>The Smoker</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/wheelchair-vets.png')"><img src="images/wheelchair-vets.png" alt="Veterans in all-terrain track chairs" loading="lazy"/><div class="cfv-gi-cap"><span>All-Terrain Track Chairs</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/raffle-table.png')"><img src="images/raffle-table.png" alt="Raffle table" loading="lazy"/><div class="cfv-gi-cap"><span>Raffle &amp; Trophy Table</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/sponsors-banner.png')"><img src="images/sponsors-banner.png" alt="Sponsors banner" loading="lazy"/><div class="cfv-gi-cap"><span>Top Sponsors &amp; Local Contributors</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/two-at-mic.png')"><img src="images/two-at-mic.png" alt="Presenters at mic" loading="lazy"/><div class="cfv-gi-cap"><span>Award Presentations</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000000440.JPG')"><img src="images/1000000440.JPG" alt="Roasted pig at event" loading="lazy"/><div class="cfv-gi-cap"><span>Grampy's Whole Pig Roast</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000000524.JPG')"><img src="images/1000000524.JPG" alt="Veteran in all-terrain track chair with event coordinator" loading="lazy"/><div class="cfv-gi-cap"><span>All-Terrain Track Chair Demo</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000002860.JPG')"><img src="images/1000002860.JPG" alt="Gun raffle and sponsor display table" loading="lazy"/><div class="cfv-gi-cap"><span>Gun Raffle &amp; Sponsor Display</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000003040.JPG')"><img src="images/1000003040.JPG" alt="Shooters at the station" loading="lazy"/><div class="cfv-gi-cap"><span>On the Course</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000003042.JPG')"><img src="images/1000003042.JPG" alt="Shooter calling the clay" loading="lazy"/><div class="cfv-gi-cap"><span>Calling the Clay</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000003044.JPG')"><img src="images/1000003044.JPG" alt="Shooter at station 5" loading="lazy"/><div class="cfv-gi-cap"><span>Station 5 Action</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000003051.JPG')"><img src="images/1000003051.JPG" alt="Top team trophy winners" loading="lazy"/><div class="cfv-gi-cap"><span>Top Team Winners</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000003053.JPG')"><img src="images/1000003053.JPG" alt="Trophy winners group photo" loading="lazy"/><div class="cfv-gi-cap"><span>Award Winners</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000011208.JPG')"><img src="images/1000011208.JPG" alt="Veteran recognition certificates" loading="lazy"/><div class="cfv-gi-cap"><span>Veteran Recognition</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/1000011210.JPG')"><img src="images/1000011210.JPG" alt="Winner with track chair and shotgun" loading="lazy"/><div class="cfv-gi-cap"><span>Raffle Winner</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/image000000.JPG')"><img src="images/image000000.JPG" alt="Gun raffle winner" loading="lazy"/><div class="cfv-gi-cap"><span>Gun Raffle Winner</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/image000000_11.JPG')"><img src="images/image000000_11.JPG" alt="Group celebrating at awards table" loading="lazy"/><div class="cfv-gi-cap"><span>Awards Celebration</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/image000000_12.JPG')"><img src="images/image000000_12.JPG" alt="Top Adult Shooter trophy winner" loading="lazy"/><div class="cfv-gi-cap"><span>Top Adult Shooter</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/image000000_13.JPG')"><img src="images/image000000_13.JPG" alt="Top Female Shooter trophy winner" loading="lazy"/><div class="cfv-gi-cap"><span>Top Female Shooter</span></div></div>
+      <div class="cfv-gi" onclick="openLb('images/image000000_14.JPG')"><img src="images/image000000_14.JPG" alt="Top Youth Shooter trophy winner" loading="lazy"/><div class="cfv-gi-cap"><span>Top Youth Shooter</span></div></div>
+    </div>
+  </section>
+
+  <!-- REGISTER -->
+  <section class="cfv-section" id="cfv-register" style="background:var(--cfv-navy)">
+    <div class="cfv-inner">
+      <div class="cfv-two">
+        <div>
+          <p class="cfv-lbl">Sign Up</p>
+          <h2 class="cfv-h2">Register for <em>2027</em></h2>
+          <p class="cfv-body" style="margin-bottom:2rem">Fill out the form and Denis will confirm your spot and send payment details. Or call/text <strong style="color:var(--cfv-gold2)">941-830-1249</strong> or email <a href="mailto:ClaysForVets@gmail.com" style="color:var(--cfv-gold2)">ClaysForVets@gmail.com</a>.</p>
+          <div class="cfv-form-wrap">
+            <form id="cfv-reg-form">
+              <div class="cfv-fg">
+                <label>Registration Type</label>
+                <select id="cfv-reg-type" onchange="cfvUpdateReg()">
+                  <option value="ind">Individual — $125</option>
+                  <option value="team">Team of 4 — $500</option>
+                  <option value="station">Station Sponsor — $200</option>
+                  <option value="supporting">Supporting Sponsor — $750 (4 entries)</option>
+                  <option value="event">Event Sponsor — $1,500 (8 entries)</option>
+                </select>
+              </div>
+              <div class="cfv-fg"><label>Full Name</label><input type="text" placeholder="Your name" required/></div>
+              <div class="cfv-fg"><label>Phone</label><input type="tel" placeholder="941-555-0100"/></div>
+              <div class="cfv-fg"><label>Email</label><input type="email" placeholder="you@example.com" required/></div>
+              <div class="cfv-fg" id="cfv-team-field" style="display:none"><label>Shooter Names</label><textarea placeholder="List all shooter names (one per line)"></textarea></div>
+              <div class="cfv-fg" id="cfv-company-field" style="display:none"><label>Company / Sponsor Name</label><input type="text" placeholder="Organization name"/></div>
+              <div class="cfv-fg"><label>Notes</label><textarea placeholder="Accessibility needs, questions..." style="min-height:70px"></textarea></div>
+              <button type="submit" class="btn-cfv-primary" style="width:100%;justify-content:center;padding:.9rem">Send Registration →</button>
+              <p style="font-size:.75rem;color:rgba(255,255,255,.3);text-align:center;margin-top:.75rem">Sponsor artwork deadline: March 5, 2027</p>
+            </form>
+            <div class="form-success cfv-form-success" id="cfv-reg-success">
+              <h3>YOU'RE IN! 🎯</h3>
+              <p>Denis will reach out within 48 hours with payment details. See you March 20, 2027!</p>
+            </div>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:1rem">
+          <img src="images/Flyer_2027.png" alt="2027 Event Flyer" style="width:100%;border:1px solid rgba(178,34,52,.2)" loading="lazy"/>
+          <a href="images/Flyer_2027.pdf" download="Flyer_2027.pdf" class="btn-cfv-outline" style="display:inline-flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.5rem;text-align:center;font-size:.8rem;letter-spacing:.15em">⬇ Download Flyer (PDF)</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <div class="cfv-cta-band">
+    <p style="font-size:.72rem;letter-spacing:.25em;text-transform:uppercase;color:rgba(255,255,255,.5);margin-bottom:.75rem;position:relative;z-index:2">Phil Fessenden Memorial Fund</p>
+    <h2>100% Net Proceeds<br>to Veterans</h2>
+    <p>Every dollar raised goes directly to disabled veterans and first responders in Sarasota County.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;position:relative;z-index:2">
+      <button class="btn-cfv-primary" onclick="goTo('pf')" style="background:var(--cfv-dark);border-color:rgba(255,255,255,.15)">Learn About the Fund →</button>
+      <button class="btn-cfv-outline" style="border-color:rgba(255,255,255,.3);color:rgba(255,255,255,.8)" onclick="cfvScroll('cfv-register')">Register Now</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="cfv-footer">
+    <div class="cfv-footer-inner">
+      <div>
+        <div class="cfv-footer-logo">Clays for <span>Vets</span></div>
+        <p>Annual Sporting Clays Fun Shoot benefiting disabled veterans and first responders in Sarasota County, FL. Organized by Englewood Masonic Lodge No. 360.</p>
+      </div>
+      <div class="cfv-footer-col">
+        <h4>Event</h4>
+        <ul>
+          <li><a onclick="cfvScroll('cfv-about')">About</a></li>
+          <li><a onclick="cfvScroll('cfv-event')">Schedule</a></li>
+          <li><a onclick="cfvScroll('cfv-sponsors-sec')">Sponsors</a></li>
+          <li><a onclick="cfvScroll('cfv-gallery-sec')">Gallery</a></li>
+          <li><a onclick="cfvScroll('cfv-register')">Register</a></li>
+        </ul>
+      </div>
+      <div class="cfv-footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:9418301249">941-830-1249</a></li>
+          <li><a href="mailto:ClaysForVets@gmail.com">ClaysForVets@gmail.com</a></li>
+          <li><a>Nokomis, FL 34275</a></li>
+          <li><a onclick="goTo('pf')" style="color:rgba(201,168,76,.5)">Phil Fessenden Fund →</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="cfv-footer-bar">
+      <span>© 2026–2027 Sporting Clays for Vets · Phil Fessenden Memorial Fund</span>
+      <span>Denis Doome · Englewood Masonic Lodge No. 360</span>
+    </div>
+  </footer>
+
+</div><!-- /view-cfv -->
+
+
+<!-- ╔═══════════════════════════════════════════╗
+     ║     PHIL FESSENDEN FOUNDATION LANDING    ║
+     ╚═══════════════════════════════════════════╝ -->
+<div id="view-pf" class="view">
+
+  <!-- NAV -->
+  <nav class="site-nav pf-nav">
+    <button class="nav-back" onclick="goTo('cfv')">Clays for Vets</button>
+    <span class="nav-logo-text">Phil Fessenden Memorial Fund</span>
+    <ul class="nav-links-row">
+      <li><a onclick="pfScroll('pf-story')">Our Story</a></li>
+      <li><a onclick="pfScroll('pf-impact')">Impact</a></li>
+      <li><a onclick="pfScroll('pf-gallery-sec')">Gallery</a></li>
+      <li><button class="nav-cta-pill" onclick="pfScroll('pf-donate-sec')">Donate</button></li>
+    </ul>
+    <button class="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- HERO -->
+  <section class="pf-hero">
+    <div class="pf-hero-texture"></div>
+    <div class="pf-hero-lines"></div>
+    <div class="pf-hero-inner">
+
+      <div class="pf-medal-wrap" style="width:140px;height:92px;border-radius:4px;overflow:hidden;border:none;background:none;animation:none;box-shadow:0 4px 24px rgba(0,0,0,.35)">
+        <svg width="140" height="92" viewBox="0 0 140 92" xmlns="http://www.w3.org/2000/svg">
+          <!-- 13 stripes -->
+          <rect width="140" height="92" fill="#B22234"/>
+          <rect y="7.08" width="140" height="7.08" fill="#fff"/>
+          <rect y="21.23" width="140" height="7.08" fill="#fff"/>
+          <rect y="35.38" width="140" height="7.08" fill="#fff"/>
+          <rect y="49.54" width="140" height="7.08" fill="#fff"/>
+          <rect y="63.69" width="140" height="7.08" fill="#fff"/>
+          <rect y="77.85" width="140" height="7.08" fill="#fff"/>
+          <!-- Canton -->
+          <rect width="55" height="49.54" fill="#3C3B6E"/>
+          <!-- 9 rows of stars alternating 6 and 5 -->
+          <!-- Row 1: 6 stars y=3.5 -->
+          <circle cx="5"  cy="3.5"  r="1.7" fill="#fff"/>
+          <circle cx="14" cy="3.5"  r="1.7" fill="#fff"/>
+          <circle cx="23" cy="3.5"  r="1.7" fill="#fff"/>
+          <circle cx="32" cy="3.5"  r="1.7" fill="#fff"/>
+          <circle cx="41" cy="3.5"  r="1.7" fill="#fff"/>
+          <circle cx="50" cy="3.5"  r="1.7" fill="#fff"/>
+          <!-- Row 2: 5 stars y=8.6 -->
+          <circle cx="9.5"  cy="8.6" r="1.7" fill="#fff"/>
+          <circle cx="18.5" cy="8.6" r="1.7" fill="#fff"/>
+          <circle cx="27.5" cy="8.6" r="1.7" fill="#fff"/>
+          <circle cx="36.5" cy="8.6" r="1.7" fill="#fff"/>
+          <circle cx="45.5" cy="8.6" r="1.7" fill="#fff"/>
+          <!-- Row 3: 6 stars y=13.7 -->
+          <circle cx="5"  cy="13.7" r="1.7" fill="#fff"/>
+          <circle cx="14" cy="13.7" r="1.7" fill="#fff"/>
+          <circle cx="23" cy="13.7" r="1.7" fill="#fff"/>
+          <circle cx="32" cy="13.7" r="1.7" fill="#fff"/>
+          <circle cx="41" cy="13.7" r="1.7" fill="#fff"/>
+          <circle cx="50" cy="13.7" r="1.7" fill="#fff"/>
+          <!-- Row 4: 5 stars y=18.8 -->
+          <circle cx="9.5"  cy="18.8" r="1.7" fill="#fff"/>
+          <circle cx="18.5" cy="18.8" r="1.7" fill="#fff"/>
+          <circle cx="27.5" cy="18.8" r="1.7" fill="#fff"/>
+          <circle cx="36.5" cy="18.8" r="1.7" fill="#fff"/>
+          <circle cx="45.5" cy="18.8" r="1.7" fill="#fff"/>
+          <!-- Row 5: 6 stars y=23.9 -->
+          <circle cx="5"  cy="23.9" r="1.7" fill="#fff"/>
+          <circle cx="14" cy="23.9" r="1.7" fill="#fff"/>
+          <circle cx="23" cy="23.9" r="1.7" fill="#fff"/>
+          <circle cx="32" cy="23.9" r="1.7" fill="#fff"/>
+          <circle cx="41" cy="23.9" r="1.7" fill="#fff"/>
+          <circle cx="50" cy="23.9" r="1.7" fill="#fff"/>
+          <!-- Row 6: 5 stars y=29 -->
+          <circle cx="9.5"  cy="29" r="1.7" fill="#fff"/>
+          <circle cx="18.5" cy="29" r="1.7" fill="#fff"/>
+          <circle cx="27.5" cy="29" r="1.7" fill="#fff"/>
+          <circle cx="36.5" cy="29" r="1.7" fill="#fff"/>
+          <circle cx="45.5" cy="29" r="1.7" fill="#fff"/>
+          <!-- Row 7: 6 stars y=34.1 -->
+          <circle cx="5"  cy="34.1" r="1.7" fill="#fff"/>
+          <circle cx="14" cy="34.1" r="1.7" fill="#fff"/>
+          <circle cx="23" cy="34.1" r="1.7" fill="#fff"/>
+          <circle cx="32" cy="34.1" r="1.7" fill="#fff"/>
+          <circle cx="41" cy="34.1" r="1.7" fill="#fff"/>
+          <circle cx="50" cy="34.1" r="1.7" fill="#fff"/>
+          <!-- Row 8: 5 stars y=39.2 -->
+          <circle cx="9.5"  cy="39.2" r="1.7" fill="#fff"/>
+          <circle cx="18.5" cy="39.2" r="1.7" fill="#fff"/>
+          <circle cx="27.5" cy="39.2" r="1.7" fill="#fff"/>
+          <circle cx="36.5" cy="39.2" r="1.7" fill="#fff"/>
+          <circle cx="45.5" cy="39.2" r="1.7" fill="#fff"/>
+          <!-- Row 9: 6 stars y=44.3 -->
+          <circle cx="5"  cy="44.3" r="1.7" fill="#fff"/>
+          <circle cx="14" cy="44.3" r="1.7" fill="#fff"/>
+          <circle cx="23" cy="44.3" r="1.7" fill="#fff"/>
+          <circle cx="32" cy="44.3" r="1.7" fill="#fff"/>
+          <circle cx="41" cy="44.3" r="1.7" fill="#fff"/>
+          <circle cx="50" cy="44.3" r="1.7" fill="#fff"/>
+        </svg>
+      </div>
+
+      <p class="pf-eyebrow">In Memory of · CMS Phil Fessenden</p>
+
+      <h1>
+        Phil Fessenden
+        <em>Memorial Veterans Fund</em>
+      </h1>
+
+      <div class="pf-divider-ornament">
+        <span>✦</span>
+      </div>
+
+      <p class="pf-hero-sub">Serving those who served. 100% of net proceeds from the Annual Sporting Clays for Vets Fun Shoot go directly to disabled veterans and first responders in Sarasota County, Florida.</p>
+
+      <div class="pf-hero-btns">
+        <button class="btn-pf-primary" onclick="pfScroll('pf-donate-sec')">Donate to the Fund</button>
+        <button class="btn-pf-outline" onclick="pfScroll('pf-story')">Our Story</button>
+      </div>
+
+      <div class="pf-hero-stats">
+        <div><div class="pf-stat-num">$5,000</div><div class="pf-stat-lbl">Hurricane Ian Relief Delivered</div></div>
+        <div style="width:1px;height:50px;background:rgba(196,163,90,.2);align-self:center"></div>
+        <div><div class="pf-stat-num">100%</div><div class="pf-stat-lbl">Net Proceeds to Veterans</div></div>
+        <div style="width:1px;height:50px;background:rgba(196,163,90,.2);align-self:center"></div>
+        <div><div class="pf-stat-num">2+</div><div class="pf-stat-lbl">Wheelchairs Donated</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="pf-section bg-cream" id="pf-story">
+    <div class="pf-inner">
+      <div class="pf-two center">
+        <div>
+          <p class="pf-lbl">Our Story</p>
+          <h2 class="pf-h2">The <em>Phil Fessenden</em><br>Memorial Fund</h2>
+          <p class="pf-body" style="margin-bottom:1.25rem">Named in honor of Chief Master Sergeant Phil Fessenden, this fund was established to ensure that every dollar raised through the Annual Sporting Clays for Vets Fun Shoot flows directly to local disabled veterans and first responders — with zero detours.</p>
+          <p class="pf-body" style="margin-bottom:1.25rem">Organized by Englewood Masonic Lodge No. 360 in Sarasota County, Florida, the fund works hand-in-hand with local businesses, sponsors, and volunteers so overhead stays minimal and impact stays maximal.</p>
+
+          <p class="pf-lbl" style="margin-top:2rem">Who We Support</p>
+          <div style="display:flex;flex-wrap:wrap;gap:.6rem;margin-bottom:1.75rem">
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">🎖 Army</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">⚓ Navy</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">✈ Air Force</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">🦅 Marines</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">🌊 Coast Guard</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">🚒 Fire Dept.</span>
+            <span style="font-family:'Barlow Condensed',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.14em;text-transform:uppercase;padding:.4rem .9rem;border:1px solid var(--pf-gold2);color:var(--pf-navy);background:rgba(196,163,90,.08)">🚑 First Responders</span>
+          </div>
+
+          <div class="pf-quote">
+            <blockquote>"Our thanks to those who defend democracy — for they bear the gift of liberty and pay the price of freedom."</blockquote>
+            <cite>— Phil Fessenden Memorial Fund</cite>
+          </div>
+          <button class="btn-pf-primary" onclick="pfScroll('pf-donate-sec')">Support the Fund</button>
+        </div>
+        <div>
+          <img src="images/honor-wall.png" alt="Veteran at Honor Wall" style="width:100%;border:1px solid rgba(154,124,58,.18)" loading="lazy"/>
+        </div>
+      </div>
+
+      <!-- Phil's Story -->
+      <div style="margin-top:4rem;padding:2.5rem;background:var(--pf-cream);border:1px solid rgba(154,124,58,.2);border-left:4px solid var(--pf-gold2)">
+        <p class="pf-lbl">In His Own Words</p>
+        <h2 class="pf-h2" style="font-size:1.9rem;margin-bottom:1.25rem">Who Was <em>Phil Fessenden?</em></h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2rem">
+          <div>
+            <p class="pf-body" style="margin-bottom:1rem">Phil Fessenden served 30 years across the U.S. Navy and the U.S. Air Force, retiring as a Chief Master Sergeant — the highest enlisted rate. One of the defining moments of his career came during the Cuban Missile Crisis in October 1962, when he was a member of Light Photographic Squadron 62.</p>
+            <p class="pf-body" style="margin-bottom:1rem">His squadron flew modified Crusader fighters on low-altitude aerial reconnaissance missions over Cuba, photographing Soviet nuclear missiles from just 60,000 feet — close enough, Fessenden recalled, to read the Camel cigarette brand on a pack a man was holding in his hand below.</p>
+            <p class="pf-body">"Our cameras were so good our Crusaders could take aerial photographs from 60,000 feet and read the 'Camel' cigarette brand on the pack of cigarettes a man was holding in his hand. Our squadron was all over the place during the missile crisis."</p>
+          </div>
+          <div>
+            <p class="pf-body" style="margin-bottom:1rem">President John F. Kennedy presented Light Photographic Squadron 62 with a Presidential Unit Citation for their role capturing evidence of the Russian missiles — a pivotal moment in averting World War III.</p>
+            <p class="pf-body" style="margin-bottom:1rem">After the Navy, Phil transitioned to the Air Force as an aviation electronics Tech-Sergeant supporting the F-4 Phantom. He served in Vietnam and the Panama Canal Zone, and retired in 1985 after three decades of service.</p>
+            <p class="pf-body" style="margin-bottom:1rem">Phil and his wife Judy moved to Port Charlotte and later to Florida in 2000. He is survived by two adult children, Deborah and Drew.</p>
+            <p style="font-family:'Cinzel',serif;font-size:.75rem;letter-spacing:.18em;text-transform:uppercase;color:var(--pf-gold);font-weight:600">January 22, 2017 — Rest in Honor</p>
+          </div>
+        </div>
+        <p style="font-family:'EB Garamond',serif;font-size:.85rem;color:var(--pf-muted);margin-top:1.25rem;font-style:italic">Source: The Sun, October 3, 2016 — "Man helped photograph Soviet missiles in Cuba" by Don Moore, Sun Correspondent.</p>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- IMPACT -->
+  <section class="pf-section bg-white" id="pf-impact">
+    <div class="pf-inner">
+      <div style="text-align:center;margin-bottom:1rem">
+        <p class="pf-lbl center">Direct Impact</p>
+        <h2 class="pf-h2 center">Where the <em>Money Goes</em></h2>
+      </div>
+      <div class="pf-impact-grid">
+        <div class="pf-impact-card">
+          <div class="pf-ic-icon">🌀</div>
+          <div class="pf-ic-title">Hurricane Ian Relief</div>
+          <p class="pf-ic-body">$5,000 delivered directly to Alice Bieger, a local veteran, for Hurricane Ian storm damage repair — funded entirely through the Annual Fun Shoot.</p>
+        </div>
+        <div class="pf-impact-card">
+          <div class="pf-ic-icon">♿</div>
+          <div class="pf-ic-title">All-Terrain Wheelchairs</div>
+          <p class="pf-ic-body">The fund donated off-road tracked wheelchairs enabling disabled veterans and first responders to access outdoor terrain they otherwise could not reach.</p>
+        </div>
+        <div class="pf-impact-card">
+          <div class="pf-ic-icon">🏫</div>
+          <div class="pf-ic-title">Community Support</div>
+          <p class="pf-ic-body">Donations to Myakka River Elementary and other local organizations in the Englewood and Sarasota community, supporting families of veterans.</p>
+        </div>
+      </div>
+
+      <div class="pf-two" style="margin-top:4rem">
+        <div>
+          <img src="images/wheelchair-display.png" alt="Phil Fessenden Memorial Chair" style="width:100%;border:1px solid rgba(154,124,58,.15)" loading="lazy"/>
+        </div>
+        <div>
+          <p class="pf-lbl">Wheelchair Program</p>
+          <h2 class="pf-h2" style="font-size:2rem">Mobility. <em>Freedom. Dignity.</em></h2>
+          <p class="pf-body" style="margin-bottom:1.5rem">The Phil Fessenden Memorial Fund donated all-terrain tracked wheelchairs — displayed at Bass Pro Shops and available for use — giving disabled veterans and first responders the ability to hunt, fish, and move through terrain that standard wheelchairs cannot navigate.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="pf-section" id="pf-gallery-sec" style="background:var(--pf-bg)">
+    <div class="pf-inner">
+      <p class="pf-lbl center">Photo Gallery</p>
+      <div class="pf-gallery" style="margin-top:2.5rem">
+        <div class="pf-gi" onclick="openLb('images/honor-wall.png')"><img src="images/honor-wall.png" alt="Veteran at Honor Wall" loading="lazy"/><div class="pf-gi-overlay"><span>Honor Wall Recipient</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/check-5000.png')"><img src="images/check-5000.png" alt="$5000 relief check" loading="lazy"/><div class="pf-gi-overlay"><span>Hurricane Ian Relief</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/wheelchair-display.png')"><img src="images/wheelchair-display.png" alt="Donated all-terrain wheelchair" loading="lazy"/><div class="pf-gi-overlay"><span>Phil Fessenden Memorial Chair</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/check-myakka.png')"><img src="images/check-myakka.png" alt="$500 check to Myakka River Elementary" loading="lazy"/><div class="pf-gi-overlay"><span>Community Giving — Myakka River Elementary</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/1000002890.JPG')"><img src="images/1000002890.JPG" alt="Check presented to Girl Scout Troop 617" loading="lazy"/><div class="pf-gi-overlay"><span>Girl Scout Troop 617 — Cookie Donation</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/1000007626.JPG')"><img src="images/1000007626.JPG" alt="Veteran in power wheelchair giving thumbs up" loading="lazy"/><div class="pf-gi-overlay"><span>Veteran Receives Power Wheelchair</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/1000009898.JPG')"><img src="images/1000009898.JPG" alt="Phil Fessenden Fund" loading="lazy"/><div class="pf-gi-overlay"><span>Supporting Our Veterans</span></div></div>
+        <div class="pf-gi" onclick="openLb('images/1000009982.jpeg')"><img src="images/1000009982.jpeg" alt="Track chair recipient" loading="lazy"/><div class="pf-gi-overlay"><span>Track Chair Recipient</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DONATE -->
+  <section class="pf-section" id="pf-donate-sec" style="background:var(--pf-cream)">
+    <div class="pf-inner">
+      <div class="pf-two">
+        <div>
+          <p class="pf-lbl">Give</p>
+          <h2 class="pf-h2">Support a <em>Veteran</em></h2>
+          <p class="pf-body" style="margin-bottom:2rem">Every dollar donated goes directly to disabled veterans and first responders in Sarasota County. No overhead, no detours — just direct impact.</p>
+
+          <div class="pf-donate-tiers" id="pf-tiers">
+            <div class="pf-tier sel" data-amt="50" onclick="pfSelectTier(this)"><div class="pf-tier-amt">$50</div><div class="pf-tier-desc">Ammo for one shooter</div></div>
+            <div class="pf-tier" data-amt="125" onclick="pfSelectTier(this)"><div class="pf-tier-amt">$125</div><div class="pf-tier-desc">Full shooter entry</div></div>
+            <div class="pf-tier" data-amt="500" onclick="pfSelectTier(this)"><div class="pf-tier-amt">$500</div><div class="pf-tier-desc">Team of 4</div></div>
+            <div class="pf-tier" data-amt="custom" onclick="pfSelectTier(this)"><div class="pf-tier-amt">Other</div><div class="pf-tier-desc">Your amount</div></div>
+          </div>
+
+          <div class="pf-form-wrap">
+            <form id="pf-donate-form">
+              <div class="pf-fg"><label>Donation Amount ($)</label><input type="number" id="pf-amt" value="50" min="1"/></div>
+              <div class="pf-fg"><label>Full Name</label><input type="text" placeholder="Your name" required/></div>
+              <div class="pf-fg"><label>Email</label><input type="email" placeholder="you@example.com" required/></div>
+              <button type="submit" class="btn-pf-primary" style="width:100%;justify-content:center;padding:.9rem">Donate to the Fund ✦</button>
+              <p style="font-family:'EB Garamond',serif;font-size:.9rem;color:var(--pf-muted);text-align:center;margin-top:.85rem;font-style:italic">Make checks payable to: Phil Fessenden Memorial Fund<br>9442 Casa Grande Ave · Englewood, FL 34224<br>Zelle: 941-830-1249</p>
+            </form>
+            <div class="form-success pf-form-success" id="pf-donate-success">
+              <h3>Thank You ✦</h3>
+              <p>Your generosity directly helps disabled veterans and first responders in Sarasota County. We are grateful for your support.</p>
+            </div>
+          </div>
+        </div>
+
+        <div>
+          <p class="pf-lbl">Contact</p>
+          <h2 class="pf-h2" style="font-size:2rem">Get in <em>Touch</em></h2>
+          <div style="display:flex;flex-direction:column;gap:1.25rem;margin-bottom:2rem">
+            <div style="border-left:2px solid var(--pf-gold2);padding:.75rem 1.25rem;background:rgba(154,124,58,.05)">
+              <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--pf-gold);margin-bottom:.3rem">Event Coordinator</div>
+              <div style="font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--pf-navy)">Denis Doome</div>
+            </div>
+            <div style="border-left:2px solid var(--pf-gold2);padding:.75rem 1.25rem;background:rgba(154,124,58,.05)">
+              <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--pf-gold);margin-bottom:.3rem">Phone / Zelle</div>
+              <div style="font-family:'EB Garamond',serif;font-size:1.05rem"><a href="tel:9418301249" style="color:var(--pf-navy)">941-830-1249</a></div>
+            </div>
+            <div style="border-left:2px solid var(--pf-gold2);padding:.75rem 1.25rem;background:rgba(154,124,58,.05)">
+              <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--pf-gold);margin-bottom:.3rem">Email</div>
+              <div style="font-family:'EB Garamond',serif;font-size:1.05rem"><a href="mailto:ClaysForVets@gmail.com" style="color:var(--pf-navy)">ClaysForVets@gmail.com</a></div>
+            </div>
+            <div style="border-left:2px solid var(--pf-gold2);padding:.75rem 1.25rem;background:rgba(154,124,58,.05)">
+              <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--pf-gold);margin-bottom:.3rem">Mailing Address</div>
+              <div style="font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--pf-navy)">Phil Fessenden Memorial Fund<br>9442 Casa Grande Ave<br>Englewood, FL 34224-8007</div>
+            </div>
+            <div style="border-left:2px solid var(--pf-gold2);padding:.75rem 1.25rem;background:rgba(154,124,58,.05)">
+              <div style="font-family:'Cinzel',serif;font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--pf-gold);margin-bottom:.3rem">Organizer</div>
+              <div style="font-family:'EB Garamond',serif;font-size:1.05rem;color:var(--pf-navy)">Englewood Masonic Lodge No. 360</div>
+            </div>
+          </div>
+          <div style="padding:1.25rem;border:1px solid rgba(154,124,58,.2);background:rgba(154,124,58,.04)">
+            <p style="font-family:'Cinzel',serif;font-size:.65rem;letter-spacing:.2em;text-transform:uppercase;color:var(--pf-gold);margin-bottom:.5rem">Also part of this mission</p>
+            <p style="font-family:'EB Garamond',serif;font-size:1rem;color:var(--pf-muted);font-style:italic;margin-bottom:.75rem">The Annual Sporting Clays for Vets Fun Shoot is how we raise these funds. Join us on the range.</p>
+            <button class="btn-pf-primary" onclick="goTo('cfv')" style="font-size:.68rem;padding:.65rem 1.4rem">View the Fun Shoot →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA BAND -->
+  <div class="pf-cta-band">
+    <p class="pf-lbl center" style="color:var(--pf-gold2)">Englewood Masonic Lodge No. 360</p>
+    <h2 class="pf-h2 center" style="color:#fff;margin-bottom:.75rem">Every Dollar. <em>Every Veteran.</em></h2>
+    <p>The Phil Fessenden Memorial Fund was built on a simple promise — those who served deserve direct, meaningful support from the community they protected.</p>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <button class="btn-pf-primary" onclick="pfScroll('pf-donate-sec')">Donate Now ✦</button>
+      <button class="btn-pf-outline" onclick="goTo('cfv')">View the Fun Shoot →</button>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer class="pf-footer">
+    <div class="pf-footer-inner">
+      <div>
+        <div class="pf-footer-logo">CMS Phil Fessenden Memorial Veterans Fund</div>
+        <p>Serving disabled veterans and first responders in Sarasota County, FL. Organized by Englewood Masonic Lodge No. 360.</p>
+      </div>
+      <div class="pf-footer-col">
+        <h4>Fund</h4>
+        <ul>
+          <li><a onclick="pfScroll('pf-story')">Our Story</a></li>
+          <li><a onclick="pfScroll('pf-impact')">Impact</a></li>
+          <li><a onclick="pfScroll('pf-gallery-sec')">Gallery</a></li>
+          <li><a onclick="pfScroll('pf-donate-sec')">Donate</a></li>
+        </ul>
+      </div>
+      <div class="pf-footer-col">
+        <h4>Contact</h4>
+        <ul>
+          <li><a href="tel:9418301249">941-830-1249</a></li>
+          <li><a href="mailto:ClaysForVets@gmail.com">ClaysForVets@gmail.com</a></li>
+          <li><a>Englewood, FL 34224</a></li>
+          <li><a onclick="goTo('cfv')" style="color:rgba(196,163,90,.5)">Fun Shoot →</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="pf-footer-bar">
+      <span>© 2026–2027 CMS Phil Fessenden Memorial Veterans Fund</span>
+      <span>Denis Doome · Englewood Masonic Lodge No. 360</span>
+    </div>
+  </footer>
+
+</div><!-- /view-pf -->
+
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lb" onclick="closeLb()">
+  <button class="lb-close" onclick="closeLb()">✕</button>
+  <img id="lb-img" src="" alt=""/>
+</div>
+
+
+<script>
+/* ── Router ── */
+function goTo(id) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  const el = document.getElementById('view-' + id);
+  if (!el) return;
+  // Disable smooth scroll temporarily so jump is instant
+  document.documentElement.style.scrollBehavior = 'auto';
+  el.classList.add('active');
+  // Use rAF to ensure the view is painted before we scroll
+  requestAnimationFrame(function() {
+    requestAnimationFrame(function() {
+      window.scrollTo(0, 0);
+      document.documentElement.style.scrollBehavior = '';
+    });
+  });
+}
+
+/* ── Scroll to anchor within a view ── */
+function cfvScroll(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function pfScroll(id) {
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── Lightbox ── */
+function openLb(src) {
+  document.getElementById('lb-img').src = src;
+  document.getElementById('lb').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeLb() {
+  document.getElementById('lb').classList.remove('open');
+  document.body.style.overflow = '';
+}
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeLb(); });
+
+/* ── CFV Registration form ── */
+function cfvUpdateReg() {
+  const v = document.getElementById('cfv-reg-type').value;
+  document.getElementById('cfv-team-field').style.display =
+    (v === 'team' || v === 'supporting' || v === 'event') ? 'block' : 'none';
+  document.getElementById('cfv-company-field').style.display =
+    (v === 'station' || v === 'supporting' || v === 'event') ? 'block' : 'none';
+}
+document.getElementById('cfv-reg-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  this.style.display = 'none';
+  document.getElementById('cfv-reg-success').style.display = 'block';
+});
+
+/* ── PF Donate tiers ── */
+function pfSelectTier(el) {
+  document.querySelectorAll('.pf-tier').forEach(t => t.classList.remove('sel'));
+  el.classList.add('sel');
+  const a = el.dataset.amt;
+  if (a !== 'custom') document.getElementById('pf-amt').value = a;
+}
+document.getElementById('pf-donate-form').addEventListener('submit', function(e) {
+  e.preventDefault();
+  this.style.display = 'none';
+  document.getElementById('pf-donate-success').style.display = 'block';
+});
+
+/* ── Init ── */
+goTo('chooser');
+</script>
+</body>
+</html>
